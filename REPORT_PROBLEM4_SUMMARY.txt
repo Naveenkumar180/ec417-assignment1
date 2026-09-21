@@ -1,0 +1,15 @@
+PROBLEM 4 — CALIFORNIA HOUSING: PLAIN-LANGUAGE SUMMARY
+
+The California Housing dataset contains 20,640 census block groups from California. Each observation describes a geographic area using eight numerical predictors: median income, house age, average rooms, average bedrooms, population, households, latitude and longitude. The target is median house value, measured in units of $100,000.
+
+Two important data-quality problems were found.
+
+First, the target variable has an exact maximum of 5.0. The histogram shows a sharp cutoff at this upper limit. This phenomenon is called right-censoring, or top-coding. The most likely explanation is that the original data collection imposed a maximum recorded house value. Consequently, districts whose true values exceed the limit are all represented by the same target value. A regression model trained on these labels can systematically underestimate the values of the most expensive districts.
+
+Second, several predictor variables have severe right skew and unusually large maximum values, particularly AveRooms, AveBedrms and AveOccup. These are ratio variables, so unusually small denominators can produce very large ratios. Such observations should not automatically be removed; they should first be investigated and then treated using an appropriate transformation or robust approach if justified.
+
+The three predictors I would examine first are MedInc, Latitude and Longitude. MedInc has the strongest association with the target in the correlation analysis and provides an economically meaningful signal. Latitude and Longitude capture strong geographic variation in house values, including concentrations of high-value observations around major coastal metropolitan areas.
+
+The geographic structure also means that nearby census blocks may share unobserved characteristics. Therefore, observations are not necessarily independent. A random train/test split can place neighboring and similar observations in both sets, potentially making test performance look better than performance on genuinely new geographic regions.
+
+Finally, preprocessing must be fitted using only the training data. Computing means and standard deviations using the complete dataset allows information from the test set to enter the preprocessing step. This is data leakage. The correct procedure is to calculate preprocessing statistics using the training set and then apply those same statistics to the test set.
